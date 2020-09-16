@@ -401,3 +401,62 @@ addEmployee = () => {
       })
     })
   }
+  
+  deptAdd = () => {
+    inquirer
+      .prompt([
+        {
+          name: 'dName',
+          type: 'input',
+          message: 'Enter new Department title:',
+          validate: async function confirmStringInput(input) {
+            if (input.trim() != '' && input.trim().length <= 30) {
+              return true
+            }
+            return 'Invalid input. Please limit your input to 30 characters or less.'
+          }
+        }
+      ])
+      .then((answer) => {
+        const query = `INSERT INTO department (name) VALUES (?);`
+        connection.query(query, [answer.dName], (err, res) => {
+          if (err) throw err
+          console.log('  New Department added successfully!')
+          queryDepartmentsCallBack(function (departments) {
+            renderScreen('departments', departments)
+          })
+        })
+      })
+  }
+  
+  addRole = () => {
+    const departments = []
+    const departmentsName = []
+  
+    const query = `SELECT id, name FROM department`
+    connection.query(query, (err, res) => {
+      if (err) throw err
+      for (let i = 0; i < res.length; i++) {
+        departments.push({
+          id: res[i].id,
+          name: res[i].name
+        })
+        departmentsName.push(res[i].name)
+      }
+      inquirer
+        .prompt([
+          {
+            name: 'rName',
+            type: 'input',
+            message: 'Enter new role title:',
+            validate: async function confirmStringInput(input) {
+              if (input.trim() != '' && input.trim().length <= 30) {
+                return true
+              }
+              return 'Invalid input. Please limit your input to 30 characters or less.'
+            }
+          },
+          {
+            
+
+          

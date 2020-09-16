@@ -365,4 +365,39 @@ addEmployee = () => {
                   name: 'managerPromptChoice',
                   message: 'Select Manager:',
                   choices: managersNames
-                }) 
+                })
+
+.then((answer) => {
+                  const chosenManager = answer.managerPromptChoice
+                  let chosenManagerID
+                  for (let i = 0; i < managers.length; i++) {
+                    if (managers[i].fullName === chosenManager) {
+                      chosenManagerID = managers[i].id
+                      break
+                    }
+                  }
+
+                  tempEmp.managerID = chosenManagerID
+
+                  const query = 'INSERT INTO employee SET ?'
+                  connection.query(
+                    query,
+                    {
+                      first_name: tempEmp.firstName,
+                      last_name: tempEmp.lastName,
+                      role_id: tempEmp.roleID || 0,
+                      manager_id: tempEmp.managerID || 0
+                    },
+                    (err, res) => {
+                      if (err) throw err
+                      console.log('Employee Added')
+
+                      setTimeout(searchAllEmployees, 500)
+                    }
+                  )
+                })
+            })
+          })
+      })
+    })
+  }

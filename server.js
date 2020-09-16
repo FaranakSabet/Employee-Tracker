@@ -61,4 +61,67 @@ menuPrompt = () => {
         'Exit Program'
       ]
     })
-    
+
+.then((answer) => {
+      switch (answer.promptChoice) {
+        case 'View All Employees':
+          searchAllEmployees()
+          break
+
+        case 'View All Employees by Department':
+          queryDepartments()
+          break
+
+        case 'View All Employees by Manager':
+          queryManagers()
+          break
+
+        case 'View Roles':
+          queryRolesOnly()
+          break
+
+        case 'View Departments':
+          queryDepartmentsOnly()
+          break
+
+        case 'Add Employee':
+          addEmployee()
+          break
+
+        case 'Add Roles':
+          addRole()
+          break
+
+        case 'Add Departments':
+          deptAdd()
+          break
+
+        case 'Remove Employee':
+          employeeRemove()
+          break
+
+        case 'Remove Role':
+          roleRemove()
+          break
+
+        case 'Remove Department':
+          deptRemove()
+          break
+
+        case 'Update Employee Role':
+          employeeRoleUpdate()
+          break
+
+        case 'Update Employee Manager':
+          employeeManagerUpdate()
+          break
+
+        case 'View Total Utilized Budget By Department':
+          totalBudgetSearch()
+          break
+
+        case 'Exit Program':
+          clear()
+          process.exit()
+      }
+    })

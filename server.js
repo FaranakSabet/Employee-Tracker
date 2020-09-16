@@ -28,3 +28,11 @@ appStart = () => {
 welcomeScreen = () => {
   console.log("Welcome to Employee Database System\n");
 };
+
+renderScreen = (tableTitle, tableData) => {
+  clear();
+  welcomeScreen();
+  console.log(tableTitle);
+  console.table(tableData);
+  menuPrompt();
+};

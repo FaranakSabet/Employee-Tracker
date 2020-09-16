@@ -341,4 +341,28 @@ addEmployee = () => {
                 chosenRoleID = roles[i].id
               }
             }
-            
+            tempEmp.roleID = chosenRoleID
+            const query = `
+                    SELECT DISTINCT concat(manager.first_name, " ", manager.last_name) AS full_name, manager.id
+                    FROM employee
+                    LEFT JOIN employee AS manager ON manager.id = employee.manager_id;`
+            connection.query(query, (err, res) => {
+              if (err) throw err
+
+              const managers = []
+              const managersNames = []
+              for (let i = 0; i < res.length; i++) {
+                managersNames.push(res[i].full_name)
+                managers.push({
+                  id: res[i].id,
+                  fullName: res[i].full_name
+                })
+              }
+
+              inquirer
+                .prompt({
+                  type: 'list',
+                  name: 'managerPromptChoice',
+                  message: 'Select Manager:',
+                  choices: managersNames
+                }) 

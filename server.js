@@ -125,3 +125,93 @@ menuPrompt = () => {
           process.exit()
       }
     })
+
+    askDepartments = (departments) => {
+      inquirer
+        .prompt({
+          type: 'list',
+          name: 'promptChoice',
+          message: 'Select Department:',
+          choices: departments
+        })
+        .then((answer) => {
+          queryEmployeesByDepartment(answer.promptChoice)
+        })
+    }
+    
+    askManagers = (managers) => {
+      inquirer
+        .prompt({
+          type: 'list',
+          name: 'promptChoice',
+          message: 'Select Manager:',
+          choices: managers
+        })
+        .then((answer) => {
+          queryEmployeesByManager(answer.promptChoice)
+        })
+      }
+      searchAllEmployees = () => {
+        const query = `
+          SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name AS department_name, concat(manager.first_name, " ", manager.last_name) AS manager_full_name
+          FROM employee 
+          LEFT JOIN role ON employee.role_id = role.id
+          LEFT JOIN department ON department.id = role.department_id
+        LEFT JOIN employee as manager ON employee.manager_id = manager.id;`
+        connection.query(query, (err, res) => {
+          if (err) throw err
+      
+          renderScreen(
+            'All Employees',
+            res.map((r) => ({
+              ID: r.id,
+              'First Name': r.first_name,
+              'Last Name': r.last_name,
+              Role: r.title,
+              Salary: r.salary,
+              Department: r.department_name,
+              Manager: r.manager_full_name
+            }))
+          )
+        })
+      }
+      
+      queryDepartments = () => {
+        const query = `SELECT department.name FROM department;`
+        connection.query(query, (err, res) => {
+          if (err) throw err
+      
+          askDepartments(res.map((dept) => dept.name))
+        })
+      }
+      
+      queryDepartmentsCallBack = (callback) => {
+        const query = `SELECT department.name FROM department;`
+        connection.query(query, (err, res) => {
+          if (err) throw err
+          callback(res.map((r) => r.name))
+        })
+      }
+      
+      queryDepartmentsOnly = () => {
+        const query = `SELECT id, department.name FROM department;`
+        connection.query(query, (err, res) => {
+          if (err) throw err
+          renderScreen(
+            `All Departments`,
+            res.map((r) => ({ ID: r.id, Departments: r.name }))
+          )
+        })
+      }
+      
+      queryRolesOnly = () => {
+        const query = `SELECT id, title FROM employeesdb.role;`
+        connection.query(query, (err, res) => {
+          if (err) throw err
+          renderScreen(
+            'All Roles',
+            res.map((r) => ({ ID: r.id, Roles: r.title }))
+          )
+        })
+      
+

@@ -522,7 +522,9 @@ addEmployee = () => {
               chosenEmployeeID = employees[i].id
               break
             }
-          }  
+          } 
+          
+          
 
 
 

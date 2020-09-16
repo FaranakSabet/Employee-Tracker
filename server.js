@@ -20,4 +20,12 @@ connection.connect(function (err) {
   appStart();
 });
 
-appStart = () => {};
+appStart = () => {
+  clear();
+  welcomeScreen();
+  menuPrompt();
+};
+
+welcomeScreen = () => {
+  console.log("Welcome to Employee Database System\n");
+};

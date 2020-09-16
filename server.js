@@ -523,6 +523,32 @@ addEmployee = () => {
               break
             }
           } 
+          const query = 'DELETE FROM employee WHERE ?'
+        connection.query(query, { id: chosenEmployeeID }, (err, res) => {
+          if (err) throw err
+          console.log('Employee Removed')
+
+          setTimeout(searchAllEmployees, 500)
+        })
+      })
+  })
+}
+
+roleRemove = () => {
+  const query = `
+    SELECT id, role.title FROM role;`
+  connection.query(query, (err, res) => {
+    if (err) throw err
+
+    const roles = []
+    const rolesNames = []
+    for (let i = 0; i < res.length; i++) {
+      roles.push({
+        id: res[i].id,
+        title: res[i].title
+      })
+      rolesNames.push(res[i].title)
+    }
           
           
 

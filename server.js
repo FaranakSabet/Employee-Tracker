@@ -275,4 +275,37 @@ queryEmployeesByManager = (manager) => {
       }))
     )
   })
+}
+addEmployee = () => {
+  const tempEmp = {
+    firstName: '',
+    lastName: '',
+    roleID: 0,
+    managerID: 0
+  }
+  inquirer
+    .prompt([
+      {
+        name: 'firstName',
+        message: 'Enter first name: ',
+        validate: async (input) => {
+          if (!input.match(/^[A-Z][A-Z ]{0,}/i)) {
+            return "Sorry, the employee's first name must contain at least 1 character and must only contain letters and spaces!"
+              .yellow
+          }
+          return true
+        }
+      },
+      {
+        name: 'lastName',
+        message: 'Enter last name: ',
+        validate: async (input) => {
+          if (!input.match(/^[A-Z][A-Z ]{0,}/i)) {
+            return "Sorry, the employee's last name must contain at least 1 character and must only contain letters and spaces!"
+              .yellow
+          }
+          return true
+        }
+      }
+    ])
 

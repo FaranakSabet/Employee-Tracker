@@ -457,6 +457,73 @@ addEmployee = () => {
             }
           },
           {
-            
+            name: 'salNum',
+          type: 'input',
+          message: 'Enter role salary:',
+          validate: (input) => {
+            if (!input.match(/^[0-9]+$/)) {
+              return 'Please enter a number'.yellow
+            }
+            return true
+          }
+        },
+        {
+          type: 'list',
+          name: 'roleDept',
+          message: 'Select department:',
+          choices: departmentsName
+        }
+      ])
+      .then((answer) => {
+        let deptID = departments.find((obj) => obj.name === answer.roleDept).id
+        connection.query(
+          'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)',
+          [answer.rName, answer.salNum, deptID],
+          (err, res) => {
+            if (err) throw err
+            console.log(
+              `${answer.rName} was added to the ${answer.roleDept} department.`
+            )
+            queryRolesOnly()
+          }
+        )
+      })
+  })
+  }
+  employeeRemove = () => {
+    const query = `
+      SELECT id, concat(employee.first_name, " ", employee.last_name) AS employee_full_name
+      FROM employee ;`
+    connection.query(query, (err, res) => {
+      if (err) throw err
+  
+      let employees = []
+      let employeesNames = []
+      for (let i = 0; i < res.length; i++) {
+        employees.push({
+          id: res[i].id,
+          fullName: res[i].employee_full_name
+        })
+        employeesNames.push(res[i].employee_full_name)
+      }
+  
+      inquirer
+        .prompt({
+          type: 'list',
+          name: 'employeePromptChoice',
+          message: 'Select employee to delete:',
+          choices: employeesNames
+        })
+        .then((answer) => {
+          const chosenEmployee = answer.employeePromptChoice
+          let chosenEmployeeID
+          for (let i = 0; i < employees.length; i++) {
+            if (employees[i].fullName === chosenEmployee) {
+              chosenEmployeeID = employees[i].id
+              break
+            }
+          }  
+
+
 
           

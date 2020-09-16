@@ -308,4 +308,37 @@ addEmployee = () => {
         }
       }
     ])
+    .then((answers) => {
+      tempEmp.firstName = answers.firstName
+      tempEmp.lastName = answers.lastName
 
+      const query = `SELECT role.title, role.id FROM role;`
+      connection.query(query, (err, res) => {
+        if (err) throw err
+
+        const roles = []
+        const rolesNames = []
+        for (let i = 0; i < res.length; i++) {
+          roles.push({
+            id: res[i].id,
+            title: res[i].title
+          })
+          rolesNames.push(res[i].title)
+        }
+
+        inquirer
+          .prompt({
+            type: 'list',
+            name: 'rolePromptChoice',
+            message: 'Select Role:',
+            choices: rolesNames
+          })
+          .then((answer) => {
+            const chosenRole = answer.rolePromptChoice
+            let chosenRoleID
+            for (let i = 0; i < roles.length; i++) {
+              if (roles[i].title === chosenRole) {
+                chosenRoleID = roles[i].id
+              }
+            }
+            

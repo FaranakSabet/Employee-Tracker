@@ -618,6 +618,61 @@ deptRemove = () => {
       })
   })
 }
+employeeRoleUpdate = () => {
+  const updatedEmployee = {
+    id: 0,
+    roleID: 0
+  }
+
+  const query = `
+    SELECT id, concat(employee.first_name, " ", employee.last_name) AS employee_full_name
+    FROM employee ;`
+  connection.query(query, (err, res) => {
+    if (err) throw err
+
+    let employees = []
+    let employeesNames = []
+    for (let i = 0; i < res.length; i++) {
+      employees.push({
+        id: res[i].id,
+        fullName: res[i].employee_full_name
+      })
+      employeesNames.push(res[i].employee_full_name)
+    }
+
+    inquirer
+      .prompt({
+        type: 'list',
+        name: 'employeePromptChoice',
+        message: 'Select employee to update:',
+        choices: employeesNames
+      })
+      .then((answer) => {
+        const chosenEmployee = answer.employeePromptChoice
+        let chosenEmployeeID
+        for (let i = 0; i < employees.length; i++) {
+          if (employees[i].fullName === chosenEmployee) {
+            chosenEmployeeID = employees[i].id
+            break
+          }
+        }
+
+        updatedEmployee.id = chosenEmployeeID
+
+        const query = `SELECT role.title, role.id FROM role;`
+        connection.query(query, (err, res) => {
+          if (err) throw err
+
+          const roles = []
+          const rolesNames = []
+          for (let i = 0; i < res.length; i++) {
+            roles.push({
+              id: res[i].id,
+              title: res[i].title
+            })
+            rolesNames.push(res[i].title)
+          }
+          
 
 
 

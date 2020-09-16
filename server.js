@@ -213,5 +213,66 @@ menuPrompt = () => {
             res.map((r) => ({ ID: r.id, Roles: r.title }))
           )
         })
-      
+      }
+
+    queryManagers = () => {
+  const query = `
+    SELECT DISTINCT concat(manager.first_name, " ", manager.last_name) AS full_name
+    FROM employee
+    LEFT JOIN employee AS manager ON manager.id = employee.manager_id;`
+  connection.query(query, (err, res) => {
+    if (err) throw err
+    askManagers(res.map((r) => r.full_name))
+  })
+}
+
+queryEmployeesByDepartment = (department) => {
+  const query = `
+    SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, concat(manager.first_name, " ", manager.last_name) AS manager_full_name
+    FROM employee 
+    INNER JOIN role ON employee.role_id = role.id
+    INNER JOIN employee AS manager ON employee.manager_id = manager.id
+    INNER JOIN department ON department.id = role.department_id
+    WHERE department.name = "${department}";`
+  connection.query(query, (err, res) => {
+    if (err) throw err
+
+    renderScreen(
+      `${department} Department`,
+      res.map((r) => ({
+        ID: r.id,
+        'First Name': r.first_name,
+        'Last Name': r.last_name,
+        Role: r.title,
+        Salary: r.salary,
+        Manager: r.manager_full_name
+      }))
+    )
+  })
+  
+}
+
+
+queryEmployeesByManager = (manager) => {
+  const query = `
+    SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name AS department_name, concat(manager.first_name, " ", manager.last_name) AS manager_full_name 
+    FROM employee 
+    INNER JOIN role ON employee.role_id = role.id
+    INNER JOIN employee AS manager ON employee.manager_id = manager.id
+    INNER JOIN department ON department.id = role.department_id
+    WHERE concat(manager.first_name, " ", manager.last_name) = "${manager}";`
+  connection.query(query, (err, res) => {
+    if (err) throw err
+    renderScreen(
+      `Employees managed by ${manager}`,
+      res.map((r) => ({
+        ID: r.id,
+        'First Name': r.first_name,
+        'Last Name': r.last_name,
+        Role: r.title,
+        Salary: r.salary,
+        Department: r.department_name
+      }))
+    )
+  })
 

@@ -36,3 +36,29 @@ renderScreen = (tableTitle, tableData) => {
   console.table(tableData);
   menuPrompt();
 };
+
+menuPrompt = () => {
+  inquirer
+    .prompt({
+      type: 'list',
+      name: 'promptChoice',
+      message: 'Pick an option:',
+      choices: [
+        'View All Employees',
+        'View All Employees by Department',
+        'View All Employees by Manager',
+        'View Roles',
+        'View Departments',
+        'Add Employee',
+        'Add Roles',
+        'Add Departments',
+        'Remove Employee',
+        'Remove Role',
+        'Remove Department',
+        'Update Employee Role',
+        'Update Employee Manager',
+        'View Total Utilized Budget By Department',
+        'Exit Program'
+      ]
+    })
+    

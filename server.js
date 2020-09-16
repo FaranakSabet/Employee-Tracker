@@ -549,6 +549,32 @@ roleRemove = () => {
       })
       rolesNames.push(res[i].title)
     }
+    inquirer
+      .prompt({
+        type: 'list',
+        name: 'rolesPromptChoice',
+        message: 'Select Role to delete',
+        choices: rolesNames
+      })
+      .then((answer) => {
+        const chosenRole = answer.rolesPromptChoice
+        let chosenRoleID
+        for (let i = 0; i < roles.length; i++) {
+          if (roles[i].title === chosenRole) {
+            chosenRoleID = roles[i].id
+            break
+          }
+        }
+        const query = 'DELETE FROM role WHERE ?'
+        connection.query(query, { id: chosenRoleID }, (err, res) => {
+          if (err) throw err
+          console.log('Role Removed')
+
+          setTimeout(queryRolesOnly, 500)
+        })
+      })
+  })
+
           
           
 

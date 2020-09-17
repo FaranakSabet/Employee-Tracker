@@ -672,7 +672,106 @@ employeeRoleUpdate = () => {
             })
             rolesNames.push(res[i].title)
           }
+
+          inquirer
+            .prompt({
+              type: 'list',
+              name: 'rolePromptChoice',
+              message: 'Select Role:',
+              choices: rolesNames
+            })
+            .then((answer) => {
+              const chosenRole = answer.rolePromptChoice
+              let chosenRoleID
+              for (let i = 0; i < roles.length; i++) {
+                if (roles[i].title === chosenRole) {
+                  chosenRoleID = roles[i].id
+                }
+              }
+
+              updatedEmployee.roleID = chosenRoleID
+
+              const query = `UPDATE employee SET ? WHERE ?`
+              connection.query(
+                query,
+                [
+                  {
+                    role_id: updatedEmployee.roleID
+                  },
+                  {
+                    id: updatedEmployee.id
+                  }
+                ],
+                (err, res) => {
+                  if (err) throw err
+                  console.log('Employee Role Updated')
+
+                  setTimeout(searchAllEmployees, 500)
+                }
+              )
+            })
+        })
+      })
+  })
+}
+employeeManagerUpdate = () => {
+  const updatedEmployee = {
+    id: 0,
+    managerID: 0
+  }
+
+  const query = `
+    SELECT id, concat(employee.first_name, " ", employee.last_name) AS employee_full_name
+    FROM employee ;`
+  connection.query(query, (err, res) => {
+    if (err) throw err
+
+    let employees = []
+    let employeesNames = []
+    for (let i = 0; i < res.length; i++) {
+      employees.push({
+        id: res[i].id,
+        fullName: res[i].employee_full_name
+      })
+      employeesNames.push(res[i].employee_full_name)
+    }
+
+    inquirer
+      .prompt({
+        type: 'list',
+        name: 'employeePromptChoice',
+        message: 'Select employee to update:',
+        choices: employeesNames
+      })
+      .then((answer) => {
+        const chosenEmployee = answer.employeePromptChoice
+        let chosenEmployeeID
+        for (let i = 0; i < employees.length; i++) {
+          if (employees[i].fullName === chosenEmployee) {
+            chosenEmployeeID = employees[i].id
+            break
+          }
+        }
+
+        updatedEmployee.id = chosenEmployeeID
+
+        const query = `
+            SELECT DISTINCT concat(manager.first_name, " ", manager.last_name) AS full_name, manager.id
+            FROM employee
+            LEFT JOIN employee AS manager ON manager.id = employee.manager_id;`
+        connection.query(query, (err, res) => {
+          if (err) throw err
+
+          const managers = []
+          const managersNames = []
+          for (let i = 0; i < res.length; i++) {
+            managersNames.push(res[i].full_name)
+            managers.push({
+              id: res[i].id,
+              fullName: res[i].full_name
+            })
           
+
 
 
 

@@ -770,14 +770,67 @@ employeeManagerUpdate = () => {
               id: res[i].id,
               fullName: res[i].full_name
             })
-          
+          }
 
+          inquirer
+          .prompt({
+            type: 'list',
+            name: 'managerPromptChoice',
+            message: 'Select Manager:',
+            choices: managersNames
+          })
+          .then((answer) => {
+            const chosenManager = answer.managerPromptChoice
+            let chosenManagerID
+            for (let i = 0; i < managers.length; i++) {
+              if (managers[i].fullName === chosenManager) {
+                chosenManagerID = managers[i].id
+                break
+              }
+            }
 
+            updatedEmployee.managerID = chosenManagerID
 
+            const query = `UPDATE employee SET ? WHERE ?`
+            connection.query(
+              query,
+              [
+                {
+                  manager_id: updatedEmployee.managerID
+                },
+                {
+                  id: updatedEmployee.id
+                }
+              ],
+              (err, res) => {
+                if (err) throw err
+                console.log('Employee Role Updated')
 
-          
-          
+                setTimeout(searchAllEmployees, 500)
+              }
+            )
+          })
+      })
+    })
+})
+}
 
+totalBudgetSearch = () => {
+const query = `select d.name "Department", SUM(r.salary) "BudgetUtilized" 
+  from role r
+  JOIN department d 
+  JOIN employee e 
+  where r.id = e.role_id and r.id = d.id group by r.id;`
+connection.query(query, (err, res) => {
+  if (err) throw err
 
-
-          
+  const tableData = []
+  for (let i = 0; i < res.length; i++) {
+    tableData.push({
+      Department: res[i].Department,
+      'Budjet Utilized': res[i].BudgetUtilized
+    });
+  }
+  renderScreen(`Total Budjet per Department`, tableData)
+  });
+};
